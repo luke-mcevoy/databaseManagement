@@ -1,0 +1,35 @@
+---
+title: "CS 442 HW3"
+author: "Luke McEvoy"
+date: "10/14/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+I pledge my Honor that I have abided by the Stevens Honor System.
+
+$\linebreak$
+Problem 1
+
+$\pi_{gName}((Guest) \bowtie (\sigma_{hCity="NYC"}(Hotel)\bowtie\sigma_{fromDate\;LIKE\;'\%Jan\%'}(Booking)))$
+
+
+$\linebreak$
+Problem 2
+
+$\pi_{gName}(((\sigma_{noOfDays>10}(Booking))   \bowtie\  \sigma_{type="suite"}(Room) \bowtie \sigma_{hCity="NYC"}(Hotel))     \bowtie Guest))$
+
+$\linebreak$
+Problem 3
+
+$\pi_{gName}(((Booking) - \sigma_{noOfDays\leq5}(Booking)) \bowtie (Guest))$
+
+$\linebreak$
+Problem 4
+
+$(\pi_{hName}(\sigma_{hCity="NYC"}(Hotel))) - (\pi_{hName}(\sigma_{hCity="NYC}(Hotel) \bowtie (\sigma_{year="2020}(Booking))))$
+
+$\linebreak$
+Problem 5
+
+$\pi_{gName}( (Guest) \bowtie (Booking) \bowtie  (\sigma_{type="Suite"}(Room)  / \pi_{hId}(\sigma_{hCity=NYC"}(Hotel))))$

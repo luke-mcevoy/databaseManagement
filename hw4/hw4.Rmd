@@ -1,0 +1,149 @@
+---
+title: "CS 442 HW 4"
+author: "Luke McEvoy"
+date: "10/29/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+Relational Schema
+
+- Emp(  eid:      Integer,
+        ename:    string,
+        age:      Integer,
+        salary:   real)
+    
+- Work( eid:      Integer,
+        did:      Integer)
+    
+- Dept( did:      Integer,
+        budget:   real,
+        managerid: Integer,
+        dname:    string)
+
+      
+$\linebreak$
+$\bf Problem\;1$
+Find the name of the employees who work in Hardware department
+
+\begin{verbatim}
+SELECT E.ename
+FROM (Emp E) NATURAL JOIN (Work W) NATURAL JOIN (Dept D)
+WHERE D.dname = "Hardware"
+\end{verbatim}
+
+$\linebreak$
+$\bf Problem\;2$
+Find the name of the employee(s) in Hardware department who had the highest salary
+
+\begin{verbatim}
+SELECT E.ename
+FROM (Emp E) NATURAL JOIN (Work W) NATURAL JOIN (Dept D)
+WHERE D.dname = "Hardware" AND
+      E.salary >= ALL(SELECT MAX(E2.salary)
+                        FROM (Emp E2) NATURAL JOIN (Work W2) NATURAL JOIN (Dept D2)
+                        WHERE D2.dname = "Hardware")
+\end{verbatim}
+
+
+$\linebreak$
+$\bf Problem\;3$ Find the name and age of all employees who work in both
+Hardware and Software department
+
+\begin{verbatim}
+SELECT E.ename, E.age
+FROM (Emp E) NATURAL JOIN (Work W) NATURAL JOIN (Dept D)
+WHERE D.dname = "Hardware"
+INTERSECT
+SELECT E.ename, E.age
+FROM (Emp E) NATURAL JOIN (Work W) NATURAL JOIN (Dept D)
+WHERE D.dname = "Software"
+\end{verbatim}
+
+
+$\linebreak$
+$\bf Problem\;4$ Find the id of managers who control the largest total amounts of
+budget.
+
+\begin{verbatim}
+SELECT D.managerid
+FROM Dept D
+GROUP BY D.managerid
+HAVING SUM(D.budget >= ALL(SELECT SUM(D2.budget)
+                           FROM Dept D2
+                           GROUP BY D2.managerid)
+\end{verbatim}
+
+
+
+$\linebreak$
+$\bf Problem\;5$ Find the id of the managers who manage only the departments
+whose budget is at least 1 million dollars.
+
+\begin{verbatim}
+SELECT D.managerid
+FROM Dept D
+WHERE D.budget >= 1,000,000
+EXCEPT
+SELECT D.managerid
+FROM Dept D
+WHERE D.budget < 1,000,000
+\end{verbatim}
+
+
+
+$\linebreak$
+$\bf Problem\;6$ Find the name of all employees whose salary exceeds the budget
+of each department that the employee works in
+
+\begin{verbatim}
+SELECT E.ename
+FROM Emp E
+WHERE E.salary > ALL(SELECT D.budget
+                     FROM Dept D, Works W
+                     WHERE E.eid = W.eid AND
+                           W.did = D.did)
+\end{verbatim}
+
+
+$\linebreak$
+$\bf Problem\;7$ Find the name of managers who manage the department of the 
+largest budget
+
+\begin{verbatim}
+SELECT E.ename
+FROM Emp E
+WHERE E.eid = ANY(SELECT D.managerid
+                  FROM Dept D
+                  WHERE D.budget >= ALL(SELECT D2.budget
+                                        FROM Dept D2))
+\end{verbatim}
+
+
+$\linebreak$
+$\bf Problem\;8$ For each department, return the average salary of all
+employees working in this department
+
+\begin{verbatim}
+SELECT AVG(E.salary)
+FROM (Emp E) NATURAL JOIN (Works W)
+GROUP BY W.did
+\end{verbatim}
+
+
+$\linebreak$
+$\bf Problem\;9$ Find the name of employees who work in more than 3 departments
+
+\begin{verbatim}
+SELECT E.ename
+FROM (Emp E) NATURAL JOIN (Works W)
+GROUP BY E.eid
+HAVING COUNT(W.did) > 3;
+\end{verbatim}
+
+
+
+
+
+
